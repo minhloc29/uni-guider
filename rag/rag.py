@@ -93,3 +93,71 @@ def grade_documents(state):
             # web_search = "Yes"
             continue
     return {"documents": filtered_docs}
+def grade_generation_v_documents_and_question(state):
+
+    print("---CHECK HALLUCINATIONS---")
+    question = state["question"]
+    documents = state["documents"]
+    generation = state["generation"]
+    max_retries = state.get("max_retries", 3)  # Default to 3 if not provided
+    hallucination_grader_prompt_formatted = hallucination_grader_prompt.format(
+        documents=format_docs(documents), generation=generation
+    )
+    result = llm.invoke(
+        [SystemMessage(content=hallucination_grader_instructions)]
+        + [HumanMessage(content=hallucination_grader_prompt_formatted)]
+    )
+    # print("Raw response:", result.content)
+
+    # json_result = json.loads(result.content)
+    matches = re.findall(r'\{.*?\}', result, re.DOTALL)  # List of JSON-like strings
+    json_result = [json.loads(m) for m in matches] if matches else None  # Convert to JSON
+    if json_result and isinstance(json_result, list) and len(json_result) > 0:
+        grade = json_result[0].get("binary_score", "no")  # Use .get() to avoid KeyError
+    else:
+        grade = "no"
+    if grade == "yes":
+        print("---DECISION: GENERATION IS GROUNDED IN DOCUMENTS---")
+        # Check question-answering
+        print("---GRADE GENERATION vs QUESTION---")
+        # Test using question and generation from above
+        answer_grader_prompt_formatted = answer_grader_prompt.format(
+            question=question, generation=generation
+        )
+        result = llm.invoke(
+            [SystemMessage(content=answer_grader_instructions)]
+            + [HumanMessage(content=answer_grader_prompt_formatted)]
+        )
+
+        # json_result = json.loads(result.content)
+        matches = re.findall(r'\{.*?\}', result, re.DOTALL)  # List of JSON-like strings
+        json_result = [json.loads(m) for m in matches] if matches else None  # Convert to JSON
+        if json_result and isinstance(json_result, list) and len(json_result) > 0:
+            grade = json_result[0].get("binary_score", "no")  # Use .get() to avoid KeyError
+        else:
+            grade = "no"
+        # if "binary_score" in json_result:
+        #     grade = json_result["binary_score"]
+        # else:
+        #     print("Warning: 'binary_score' key not found in JSON result")
+        #     grade = 'no'
+
+        if grade == "yes":
+            print("---DECISION: GENERATION ADDRESSES QUESTION---")
+            return "useful"
+
+        elif state["loop_step"] <= max_retries:
+            print("---DECISION: GENERATION DOES NOT ADDRESS QUESTION---")
+            return "not useful"
+
+        else:
+            print("---DECISION: MAX RETRIES REACHED---")
+            return "max retries"
+
+    elif state["loop_step"] <= max_retries:
+        print("---DECISION: GENERATION IS NOT GROUNDED IN DOCUMENTS, RE-TRY---")
+        return "not supported"
+
+    else:
+        print("---DECISION: MAX RETRIES REACHED---")
+        return "max retries"
