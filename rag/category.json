@@ -1,0 +1,36 @@
+{
+    "scholarship": {
+        "page_content_tag": "div.info-request",
+        "title_tag": "div.info-request div.header-content",
+        "description": "Danh sách các học bổng dành cho sinh viên",
+        "url": "https://ctsv.hust.edu.vn/#/hoc-bong"
+    },
+
+    "guide": {
+        "page_content_tag": "div.tip-detail",
+        "title_tag": "div.header h2",
+        "description": "Danh sách các học bổng dành cho sinh viên",
+        "url": "https://ctsv.hust.edu.vn/#/so-tay-sv"
+        },
+    
+    "activities": {
+        "page_content_tag": "div.card-info",
+        "title_tag": "h3.title-detail",
+        "description": "Danh sách các học bổng dành cho sinh viên",
+        "url": "https://ctsv.hust.edu.vn/#/danh-sach-su-kien"
+    },
+
+    "freshman_knowledge": {
+        "page_content_tag": "div.tip-detail",
+        "title_tag": "div.header h2",
+        "description": "Danh sách các học bổng dành cho sinh viên",
+        "url": "https://ctsv.hust.edu.vn/#/tan-sinh-vien/nhung-dieu-can-biet"
+    }, 
+
+    "career": {
+        "page_content_tag": "div.el-row",
+        "title_tag": "h3.title-detail",
+        "description": "Danh sách các học bổng dành cho sinh viên",
+        "url": "https://ctsv.hust.edu.vn/#/danh-sach-tuyen-dung"
+    }
+}
