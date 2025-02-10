@@ -3,6 +3,7 @@ from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 from huggingface_hub import snapshot_download
 from TTS.tts.configs.xtts_config import XttsConfig
 from TTS.tts.models.xtts import Xtts
+from vietnam_number import n2w
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import RetrievalQAWithSourcesChain
 from langgraph.graph import StateGraph
@@ -67,8 +68,14 @@ class TTSAgent():
             sound_norm_refs=self.model.config.sound_norm_refs,
         )
     def extract_audio(self, text, gcl, se):
+        words = text.split(" ")
+        new_text = ""
+        for word in words:
+            if word.isdigit():
+                new_text += n2w(word)
+            new_text += word
         audio = self.model.inference(
-            text,
+            new_text,
             language='vi',
             gpt_cond_latent=gcl,
             speaker_embeddings=se,
