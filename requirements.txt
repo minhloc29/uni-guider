@@ -1,0 +1,25 @@
+# cogpit
+librosa
+trainer
+einops
+pypinyin
+spacy
+num2words
+matplotlib
+mutagen
+hangul_romanize
+torchaudio
+langchain
+langchain-community
+langchain-huggingface
+tf-keras
+weaviate
+weaviate-client
+langchain_weaviate
+langchain_google_genai
+selenium
+webdriver_manager
+unstructured
+langchain_ollama
+langgraph
+jsonformer

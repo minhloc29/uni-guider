@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Uni Guider</title>
+        <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+        <link rel="stylesheet" href="../static/css/style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins&family=Roboto&display=swap" rel="stylesheet">
+    </head>
+
+    <body>
+        <main>
+            <section class="chatbot-container">
+                <div class="bot-icon">
+                    <img src="{{ url_for('static', path='images/xin_vc.jpg') }}" class="logo">
+                    <div class="username">HUST GUIDER</div>
+                               
+                </div>
+                <div class="chatbot-answer-box" id="chatbot-answer-box">
+                    
+                </div>
+                
+                <div class="chatbot-conversation-container" id="chatbot-conversation-container">
+                    <form id="form" class="chatbot-input-container">
+                        <input name="user-input" type="text" id="user-input" required placeholder="Ask something...">
+                        <button id="submit-btn" class="submit-btn" type="submit">
+                            <img src="static/images/arrow.svg" class="send-btn-icon">   
+                        </button>
+                    </form>
+                </div>
+            </section>
+            <script src = "{{ url_for('static', path='js/script.js') }}"></script>
+        </main>
+
+    </body>
+</html>

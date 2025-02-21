@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Uni Guider</title>
+        <link rel="stylesheet" href="{{ url_for('static', path='css/intro_page.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', path='css/footer.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+        <link rel="stylesheet" href="../static/css/footer.css">
+        <link rel="stylesheet" href="../static/css/intro_page.css">
+        <link rel="stylesheet" href="../static/css/style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins&family=Roboto&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    </head>
+    
+    <body>
+        <section class="part-one">
+            <img src="{{ url_for('static', path='images/image_3.jpg') }}" class="floating-img img1">
+            <img src="{{ url_for('static', path='images/image_2.png') }}" class="floating-img img2">
+            <img src="{{ url_for('static', path='images/image_1.png') }}" class="floating-img img3">
+    
+            <div class="marker">
+                <img src="{{ url_for('static', path='images/xin_vc.jpg') }}" class="logo">
+                <div class="marker-logo">Uni Guider</div>
+            </div>
+            <div class="main-content">
+                    <div><h1>Welcome to Uni Guider</h1></div>
+                        <h2>🚀 Place for fast accessed information about our university</h2>
+                    <div class="btn-choice">
+                        <button class="custom-btn" id="scrollBtn" onclick="scrollToSection()">
+                            <h2>Start Now</h2>
+                            <span>Start asking any question about our university</span>
+                        </button>   
+                        <button class="custom-btn">
+                            <h2>About us</h2>
+                            <span>Get the introduction about this product and its reliability</span>
+                        </button>
+                    </div>
+                    <script>
+                        function scrollToSection() {
+                        document.getElementById("chat-part").scrollIntoView({ behavior: "smooth" });
+                        }
+                    </script>
+            </div>
+            
+        </section>
+        <main id="chat-part">
+            <section class="chatbot-container">
+                <div class="bot-icon">
+                    <img src="{{ url_for('static', path='images/xin_vc.jpg') }}" class="logo">
+                    <div class="username">Bạn có câu hỏi gì cho tớ không?</div>
+                            
+                </div>
+                <div class="chatbot-answer-box" id="chatbot-answer-box">
+        
+                </div>
+                
+                <div class="chatbot-conversation-container" id="chatbot-conversation-container">
+                    <form id="form" class="chatbot-input-container">
+                        <input name="user-input" type="text" id="user-input" required placeholder="Ask something...">
+                        <button id="submit-btn" class="submit-btn" type="submit">
+                            <img src="static/images/arrow.svg" class="send-btn-icon">   
+                        </button>
+                    </form>
+                </div>
+            </section>
+            <script src = "{{ url_for('static', path='js/script.js') }}"></script>
+
+        </main>
+
+       <footer style="background-color: #F8F8FF;">
+        <div class="footerContainer">
+            <div class="socialIcons">
+                <a href="javascript:void(0);" onclick="scrollToChat()"><i class="fa-brands fa-facebook"></i></a>
+                <a href="javascript:void(0);" onclick="scrollToChat()"><i class="fa-brands fa-instagram"></i></a>
+                <a href="javascript:void(0);" onclick="scrollToChat()"><i class="fa-brands fa-twitter"></i></a>
+                <a href="javascript:void(0);" onclick="scrollToChat()"><i class="fa-brands fa-google-plus"></i></a>
+                <a href="javascript:void(0);" onclick="scrollToChat()"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+            <div class="footerNav">
+                <ul><li><a href="javascript:void(0);" onclick="scrollToChat()">Home</a></li>
+                    <li><a href="javascript:void(0);" onclick="scrollToChat()">News</a></li>
+                    <li><a href="javascript:void(0);" onclick="scrollToChat()">About</a></li>
+                    <li><a href="javascript:void(0);" onclick="scrollToChat()">Contact Us</a></li>
+                    <li><a href="javascript:void(0);" onclick="scrollToChat()">our Team</a></li>
+                </ul>
+            </div>
+            
+        </div>
+        <div class="footerBottom">
+            <p>Copyright &copy;2025; Designed by <span class="designer">Minh Lộc</span></p>
+        </div>
+    </footer>
+    </body>
+</html>
