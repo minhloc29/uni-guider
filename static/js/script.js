@@ -21,6 +21,8 @@ async function progressConversation() {
     const botMessageDiv = addMessage("", "bot"); // Create an empty message for streaming
     const loadingIcon = createLoadingIcon();
     botMessageDiv.appendChild(loadingIcon);
+    setTimeout(() => window.scrollTo(0, scrollY), 0);
+
     const response = await fetch("http://127.0.0.1:8000/ask", {
         method: "POST",
         headers: {
@@ -40,6 +42,7 @@ async function progressConversation() {
             botMessageDiv.removeChild(loadingIcon);
         }
         botMessageDiv.textContent += decoder.decode(value, { stream: true });
+
     }
 }
 

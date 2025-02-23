@@ -14,9 +14,8 @@ langchain-community
 langchain-huggingface
 tf-keras
 weaviate
-weaviate-client
+faiss-cpu
 langchain_weaviate
-langchain_google_genai
 selenium
 webdriver_manager
 unstructured
