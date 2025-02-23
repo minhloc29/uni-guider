@@ -30,7 +30,7 @@
                     <div><h1>Welcome to Uni Guider</h1></div>
                         <h2>🚀 Place for fast accessed information about our university</h2>
                     <div class="btn-choice">
-                        <button class="custom-btn" id="scrollBtn" onclick="scrollToSection()">
+                        <button class="custom-btn" id="scrollBtn" onclick="window.location.href='/chat'">
                             <h2>Start Now</h2>
                             <span>Start asking any question about our university</span>
                         </button>   
@@ -39,37 +39,9 @@
                             <span>Get the introduction about this product and its reliability</span>
                         </button>
                     </div>
-                    <script>
-                        function scrollToSection() {
-                        document.getElementById("chat-part").scrollIntoView({ behavior: "smooth" });
-                        }
-                    </script>
             </div>
             
         </section>
-        <main id="chat-part">
-            <section class="chatbot-container">
-                <div class="bot-icon">
-                    <img src="{{ url_for('static', path='images/xin_vc.jpg') }}" class="logo">
-                    <div class="username">Bạn có câu hỏi gì cho tớ không?</div>
-                            
-                </div>
-                <div class="chatbot-answer-box" id="chatbot-answer-box">
-        
-                </div>
-                
-                <div class="chatbot-conversation-container" id="chatbot-conversation-container">
-                    <form id="form" class="chatbot-input-container">
-                        <input name="user-input" type="text" id="user-input" required placeholder="Ask something...">
-                        <button id="submit-btn" class="submit-btn" type="submit">
-                            <img src="static/images/arrow.svg" class="send-btn-icon">   
-                        </button>
-                    </form>
-                </div>
-            </section>
-            <script src = "{{ url_for('static', path='js/script.js') }}"></script>
-
-        </main>
 
        <footer style="background-color: #F8F8FF;">
         <div class="footerContainer">
