@@ -1,9 +1,12 @@
 import argparse
 import json
 from chatbot.utils import scrape_links
+
 # Set up argument parser
 parser = argparse.ArgumentParser(description="Scrape links for a given category.")
-parser.add_argument("category_name", type=str, help="The category name to scrape links for.")
+parser.add_argument(
+    "category_name", type=str, help="The category name to scrape links for."
+)
 
 # Parse arguments
 args = parser.parse_args()
@@ -21,7 +24,7 @@ if category_name not in category:
     exit(1)
 
 # Call scrape_links function
-links = scrape_links(category[category_name]['url'], category_name)
+links = scrape_links(category[category_name]["url"], category_name)
 
 # Print the scraped links (or handle them as needed)
 print("[INFO] Scraped Links:", links)

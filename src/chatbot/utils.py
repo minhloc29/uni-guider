@@ -6,7 +6,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from langchain_community.document_loaders import SeleniumURLLoader
-from selenium.common.exceptions import NoSuchElementException, TimeoutException, StaleElementReferenceException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    TimeoutException,
+    StaleElementReferenceException,
+)
 from langchain_core.documents import Document
 import time
 from selenium import webdriver
@@ -17,14 +21,17 @@ import random
 pattern = r"(.*hust\.edu\.vn.*|.*\.pdf$|.*husteduvn\.sharepoint\.com.*)"  # Fixed regex
 visited_urls = set()
 
+
 # use this function to scrape all links from a specified URL
-def scrape_page(driver, url, depth=0, max_depth=2, match_pattern=pattern, max_urls=5000):
+def scrape_page(
+    driver, url, depth=0, max_depth=2, match_pattern=pattern, max_urls=5000
+):
     global visited_urls
     if len(visited_urls) >= max_urls:
         print(f"Reached max URLs: {max_urls}")
         return
     print(f"Current url number: {len(visited_urls)}")
-    
+
     # Stop if depth exceeds max_depth or URL is already visited
     if depth > max_depth or url in visited_urls:
         return
@@ -35,15 +42,17 @@ def scrape_page(driver, url, depth=0, max_depth=2, match_pattern=pattern, max_ur
 
     try:
         driver.get(url)
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "a")))
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.TAG_NAME, "a"))
+        )
 
         # Collect all links' hrefs first to avoid stale elements
-        links = driver.find_elements(By.TAG_NAME, 'a')
+        links = driver.find_elements(By.TAG_NAME, "a")
         hrefs = []
 
         for link in links:
             try:
-                href = link.get_attribute('href')
+                href = link.get_attribute("href")
                 if href:
                     absolute_url = urljoin(url, href)
                     hrefs.append(absolute_url)
@@ -58,21 +67,29 @@ def scrape_page(driver, url, depth=0, max_depth=2, match_pattern=pattern, max_ur
             if len(visited_urls) >= max_urls:
                 print(f"Reached max URLs: {max_urls}")
                 return
-            
+
             # Only follow links that match the pattern
             if re.match(match_pattern, next_url) and next_url not in visited_urls:
                 print(f"Following link: {next_url}")
                 scrape_page(driver, next_url, depth + 1, max_depth)
-    
+
     except Exception as e:
         print(f"Error scraping {url}: {e}")
 
-#use this class to Loader all links we got to Document Langchain
+
+# use this class to Loader all links we got to Document Langchain
 class CustomSeleniumURLLoader(SeleniumURLLoader):
-    def __init__(self, urls: List[str], category_name: Literal['scholarship', 'career', 'freshman_knowledge', 'guide', 'activities'], **kwargs):
+    def __init__(
+        self,
+        urls: List[str],
+        category_name: Literal[
+            "scholarship", "career", "freshman_knowledge", "guide", "activities"
+        ],
+        **kwargs,
+    ):
         # Call the parent constructor with necessary arguments
-        #get urls from json file of data folder
-        
+        # get urls from json file of data folder
+
         super().__init__(urls=urls, **kwargs)
         self.category_name = category_name
         with open("rag/category.json", "r") as f:
@@ -87,8 +104,10 @@ class CustomSeleniumURLLoader(SeleniumURLLoader):
         }
         try:
             element = WebDriverWait(driver, 30).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, self.category[self.category_name]["title_tag"]))
-            )         
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, self.category[self.category_name]["title_tag"])
+                )
+            )
             metadata["title"] = element.text.strip()
         except (NoSuchElementException, TimeoutException):
             print(f"[WARNING] Metadata extraction failed for {url}")
@@ -111,7 +130,9 @@ class CustomSeleniumURLLoader(SeleniumURLLoader):
                 print(f"[INFO] Actual Loaded URL: {actual_url}")
 
                 if actual_url.startswith("data:"):
-                    print(f"[ERROR] Skipping due to unexpected 'data:' URL: {actual_url}")
+                    print(
+                        f"[ERROR] Skipping due to unexpected 'data:' URL: {actual_url}"
+                    )
                     continue
 
                 if "login" in actual_url:
@@ -120,13 +141,19 @@ class CustomSeleniumURLLoader(SeleniumURLLoader):
 
                 # Wait for the page to fully load
                 WebDriverWait(driver, 30).until(
-                    lambda d: d.execute_script('return document.readyState') == 'complete'
+                    lambda d: d.execute_script("return document.readyState")
+                    == "complete"
                 )
 
                 # Wait for the target content class element
                 try:
                     element = WebDriverWait(driver, 60).until(
-                        EC.visibility_of_element_located((By.CSS_SELECTOR, self.category[self.category_name]["page_content_tag"]))
+                        EC.visibility_of_element_located(
+                            (
+                                By.CSS_SELECTOR,
+                                self.category[self.category_name]["page_content_tag"],
+                            )
+                        )
                     )
                 except TimeoutException:
                     print(f"[ERROR] Timeout while waiting for content in {url}")
@@ -158,19 +185,17 @@ class CustomSeleniumURLLoader(SeleniumURLLoader):
 
         driver.quit()
         return docs
-    
+
+
 # use this function to write data from Document Langchain to Json file for efficient RAG retriever
 def write_data_to_json(filename: str, new_docs: List[Document]):
     dict_docs = []
     for doc in new_docs:
-        document_dict = {
-            "metadata": doc.metadata,
-            "page_content": doc.page_content
-        }
+        document_dict = {"metadata": doc.metadata, "page_content": doc.page_content}
         dict_docs.append(document_dict)
     try:
         # Try to open and load the data from the file
-        with open(filename, 'r') as file:
+        with open(filename, "r") as file:
             try:
                 data = json.load(file)
             except json.JSONDecodeError:
@@ -184,49 +209,56 @@ def write_data_to_json(filename: str, new_docs: List[Document]):
     data.extend(dict_docs)
 
     # Write the updated data back to the file
-    with open(filename, 'w') as file:
+    with open(filename, "w") as file:
         json.dump(data, file, indent=4, ensure_ascii=False)
-        
+
+
 def load_doc_from_json(filename: str) -> List[Document]:
     with open(filename, "r") as f:
         docs = json.load(f)
     documents = []
     for doc in docs:
-        loaded_document = Document(metadata=doc["metadata"],
-        page_content=doc["page_content"]
+        loaded_document = Document(
+            metadata=doc["metadata"], page_content=doc["page_content"]
         )
         documents.append(loaded_document)
     return documents
 
 
-
-#Scrape the given links to get all the links inside and write as JSON file to data folder
-def scrape_links(root_url, category: Literal["scholarship", "career", "activities", "guide", "freshman_knowledge"], i = 1):
+# Scrape the given links to get all the links inside and write as JSON file to data folder
+def scrape_links(
+    root_url,
+    category: Literal[
+        "scholarship", "career", "activities", "guide", "freshman_knowledge"
+    ],
+    i=1,
+):
     options = Options()
-    options.add_argument("--headless")  
+    options.add_argument("--headless")
     driver = webdriver.Chrome(options=options)
     all_links = set()
     driver.get(root_url)
-    driver.implicitly_wait(10) 
+    driver.implicitly_wait(10)
     # Extract all links from a category
     print(f"Scrape the category: {category}")
-    if(category == "career"):
+    if category == "career":
         next_buttons = driver.find_elements(By.CSS_SELECTOR, "button.btn-next")
         for next_button in next_buttons:
             while True:
                 # Extract all links on the current page
-                elements = driver.find_elements(By.CSS_SELECTOR, 'div.card-CompanyLst')
+                elements = driver.find_elements(By.CSS_SELECTOR, "div.card-CompanyLst")
                 a_values = [
-                element.find_element(By.TAG_NAME, 'a') for element in elements
-                if len(element.find_elements(By.TAG_NAME, 'a')) > 0
+                    element.find_element(By.TAG_NAME, "a")
+                    for element in elements
+                    if len(element.find_elements(By.TAG_NAME, "a")) > 0
                 ]
-                href_values = [a_value.get_attribute('href') for a_value in a_values]
+                href_values = [a_value.get_attribute("href") for a_value in a_values]
                 all_links.update(set(href_values))
                 try:
                     if next_button.get_attribute("disabled") is not None:
                         print("Pagination ended.")
                         break  # Exit loop if button is disabled
-                    
+
                     next_button.click()
                     time.sleep(2)  # Wait for the next page to load
 
@@ -236,20 +268,27 @@ def scrape_links(root_url, category: Literal["scholarship", "career", "activitie
 
                 print(f"Page {i} done.")
                 i += 1
-        all_links = list(all_links)     
+        all_links = list(all_links)
     else:
-        elements = driver.find_elements(By.CSS_SELECTOR, 'div.el-col')# for img in images:
-        a_values = [element.find_element(By.TAG_NAME, 'a') for element in elements]
-        all_links = [a_value.get_attribute('href') for a_value in a_values]
-    
+        elements = driver.find_elements(
+            By.CSS_SELECTOR, "div.el-col"
+        )  # for img in images:
+        a_values = [element.find_element(By.TAG_NAME, "a") for element in elements]
+        all_links = [a_value.get_attribute("href") for a_value in a_values]
+
     link_file = f"data/{category}_links.json"
     with open(link_file, "w") as f:
         json.dump(all_links, f, indent=4)
     print("Scraping completed. Links saved.")
     driver.quit()
-    
-#Load one category into json, later that we read as document for langchain vectorstore
-def document_writer(category_name: Literal["activities", "career", "freshman_knowledge", "guide", "schoolarship"]):
+
+
+# Load one category into json, later that we read as document for langchain vectorstore
+def document_writer(
+    category_name: Literal[
+        "activities", "career", "freshman_knowledge", "guide", "schoolarship"
+    ],
+):
     json_file = f"data/{category_name}_links.json"
     with open(json_file, "r") as f:
         urls = json.load(f)
@@ -257,6 +296,7 @@ def document_writer(category_name: Literal["activities", "career", "freshman_kno
     docs = loader.load()
     write_data_to_json("data/document_langchain.json", docs)
     return docs
+
 
 # with open("rag/category.json", "r") as f:
 #     category = json.load(f)

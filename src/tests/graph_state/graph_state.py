@@ -2,6 +2,7 @@ import operator
 from typing_extensions import TypedDict
 from typing import List, Annotated
 
+
 class GraphState(TypedDict):
     question: str  # User question
     generation: str  # LLM generation
